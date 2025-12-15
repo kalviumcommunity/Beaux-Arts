@@ -47,20 +47,69 @@ npm run build
 npm run start
 ```
 
-If you connect to a database or external services, create a `.env.local` with the required environment variables (e.g. `DATABASE_URL`, `NEXT_PUBLIC_API_URL`) before running.
 
 
 
+## Linting & Formatting
+
+This project uses ESLint and Prettier to keep code quality high and maintain a consistent coding style.
+
+What we use and where:
+
+- **ESLint:** configured in `eslint.config.mjs` using `eslint-config-next` (core-web-vitals preset) and `eslint-config-next/typescript`. These give Next.js and TypeScript specific rules and performance-focused best practices.
+- **Prettier:** configured in `.prettierrc` to keep formatting consistent across editors and environments.
+- **Integration:** `eslint-config-prettier` and `eslint-plugin-prettier` are included to avoid rule conflicts between ESLint and Prettier.
+
+Why these choices matter:
+
+- `eslint-config-next` enforces Next.js best practices and accessibility/performance rules (e.g., image usage, link semantics).
+- TypeScript ESLint rules help catch type-related mistakes and enforce safe patterns early.
+- Prettier ensures a single source of truth for formatting (no style bikeshedding in PRs).
+- Running automated fixes on staged files prevents malformed commits and keeps the repo clean.
+
+Quick commands
+
+- Run ESLint across the app:
+
+```bash
+npm run lint
+# or
+npx eslint src --ext .ts,.tsx,.js,.jsx
+```
+
+- Check Prettier formatting:
+
+```bash
+npx prettier --check "src/**/*.{ts,tsx,js,jsx,css}"
+```
+
+Recommended `lint-staged` setup (add to top-level `package.json`):
+
+```json
+"lint-staged": {
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"]
+}
+```
+
+Add a Husky pre-commit hook to run `lint-staged` automatically when committing:
+
+```bash
+cd /Users/admin/Desktop/Beaux-Arts
+npx husky add .husky/pre-commit "npx --no-install lint-staged"
+```
+
+Linting in action (example logs)
+
+- Prettier check output:
+
+```
+Checking formatting...
+All matched files use Prettier code style!
+```
 
 
 
-
-## Next steps
-
-- Convert this repo into a full Next.js app (if not already): add or confirm `package.json` scripts (`dev`, `build`, `start`), install Next dependencies, and scaffold app pages.
-- Want me to help convert this repository into a Next.js app in-place (no extra folder)? I can add the required files and update `package.json` for you — say "Yes, convert" and I'll proceed.
-
-
+I
 
 ---
 
