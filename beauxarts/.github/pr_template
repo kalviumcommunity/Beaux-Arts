@@ -1,0 +1,80 @@
+## Title
+[Short, clear title describing the change]
+
+---
+
+## Summary
+Provide a brief overview of what this pull request does and why it is needed.
+Mention the problem it solves or the feature it adds.
+
+---
+
+## Related Issue / Task
+- Issue / Task ID:
+- Link (if applicable):
+
+---
+
+## Changes Made
+Describe the changes in detail:
+- Added:
+- Updated:
+- Fixed:
+- Removed:
+
+---
+
+## How to Test
+Steps to verify this PR locally:
+1. Checkout this branch
+2. Run the project
+3. Navigate to:
+4. Expected result:
+
+---
+
+## Screenshots / Evidence
+Attach screenshots, screen recordings, or logs if applicable.
+
+---
+
+## Impact & Risk Assessment
+- Does this affect existing features? (Yes / No)
+- Any breaking changes? (Yes / No)
+- Rollback plan (if needed):
+
+---
+
+## Code Quality Checklist
+- [ ] Code follows naming conventions
+- [ ] Folder structure is maintained
+- [ ] Code is readable and well-commented
+- [ ] No unused variables or console logs
+
+---
+
+## Testing & Validation Checklist
+- [ ] Application runs without errors
+- [ ] No console warnings or errors
+- [ ] ESLint / Prettier checks pass
+- [ ] Tests added or updated (if applicable)
+
+---
+
+## Security Checklist
+- [ ] No API keys, secrets, or passwords committed
+- [ ] Input validation handled properly
+- [ ] No sensitive data logged
+
+---
+
+## Review Checklist
+- [ ] Self-review completed
+- [ ] Reviewed by at least one teammate
+- [ ] All review comments addressed
+- [ ] Branch is up to date with `main`
+
+---
+
+## Final Notes for Reviewers
+Any additional context, questions, or areas where you want specific feedback.
