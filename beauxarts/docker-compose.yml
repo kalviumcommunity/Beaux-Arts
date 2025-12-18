@@ -1,0 +1,25 @@
+services:
+  app:
+    build: 
+      context: ./
+      target: dev
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/.next
+      - node_modules:/app/node_modules
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbname
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data: {}
+  node_modules: {}
