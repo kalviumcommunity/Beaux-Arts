@@ -1,21 +1,17 @@
-// ...existing code...
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL
+});
+const prismaClientSingleton = () => {
+  return new PrismaClient({ adapter })
 }
-
-const globalForPrisma = global as unknown as { prisma?: PrismaClient };
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === 'development'
-        ? ['query', 'info', 'warn', 'error']
-        : ['warn', 'error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-// ...existing code...
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.prismaGlobal = prisma;
+}
+export default prisma;
