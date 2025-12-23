@@ -4,6 +4,10 @@ import prisma from "@/lib/prisma";
 import { roles, users } from "./seedData/user";
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Cannot run seed script in production environment");
+  }
+
   // Upsert roles first so we can connect by name when creating users
   for (const r of roles) {
     await prisma.userRole.upsert({
