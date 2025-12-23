@@ -13,21 +13,155 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  ADMIN
+  USER
+  SELLER
+}
+
 model User {
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  fullname        String?
+  password        String
+  role            Role             @default(USER) 
+  phone           String?
+  
+  
+  artist          Artist?          // 1:1 Relation (A user might be an artist)
+  cart            Cart?            // 1:1 Relation (A user has one cart)
+  orders          Order[]          // 1:N Relation (A user has many orders)
+  shippingAddresses ShippingAddress[] 
+  paymentMethods  PaymentMethod[]
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Artist {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique // <--- Unique ensures 1:1 (One User = One Artist Profile)
+  user        User      @relation(fields: [userId], references: [id])
+  bio         String?
+  birthDate   DateTime?
+  storeName   String    @unique @map("store_name") 
+  commissions Float     @default(3)
+  
+  artworks    Artwork[] // <--- Reverse relation: An artist has many artworks
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Artwork {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String?
+  artistId    Int
+  artist      Artist      @relation(fields: [artistId], references: [id])
+  isUnique    Boolean     @default(true)
+  stock       Int         @default(1)
+  available   Boolean     @default(true)
+  price       Decimal     @db.Decimal(10, 2)       
+  
+  cartItems   CartItem[]  // <--- Reverse relation
+  orderItems  OrderItem[] // <--- Reverse relation
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+
+model ShippingAddress {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  postalCode   String
+  country      String
+  
+  orders       Order[]  // <--- Reverse relation: This address is used in many orders
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("shipping_addresses") 
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+
+model PaymentMethod {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  fullname  String?
-  password  String
-  roleId    Int
-  role      UserRole @relation(fields: [roleId], references: [id])
-  phone     String?
+  method    String
+  provider  String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  orders    Order[]  // <--- Reverse relation: A payment method can be used in many orders
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payment_methods")
+}
+
+model Order {
+  id                Int             @id @default(autoincrement())
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  shippingAddressId Int
+  shippingAddress   ShippingAddress @relation(fields: [shippingAddressId], references: [id])
+  totalAmount       Float
+  status            OrderStatus     @default(PENDING)
+  
+  orderItems        OrderItem[]
+
+  paymentMethodId   Int?
+  paymentMethod     PaymentMethod?  @relation(fields: [paymentMethodId], references: [id])
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  artworkId Int
+  artwork   Artwork  @relation(fields: [artworkId], references: [id])
+  quantity  Int      @default(1)
+  price     Decimal    
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model UserRole {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique 
+  user      User       @relation(fields: [userId], references: [id])
+  
+  cartItems CartItem[]
 
-  users User[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  artworkId Int
+  artwork   Artwork  @relation(fields: [artworkId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
