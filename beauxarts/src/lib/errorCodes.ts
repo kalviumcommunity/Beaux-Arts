@@ -3,5 +3,6 @@ export const ERROR_CODES = {
   NOT_FOUND: "E002",
   DATABASE_FAILURE: "E003",
   INTERNAL_ERROR: "E500",
+  USER_EXISTS : "E004",
   
 };
