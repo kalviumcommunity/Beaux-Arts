@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ERROR_CODES } from "./errorCodes";
 
 // Standardize the response structure type
 type ApiResponse<T = null> = {
@@ -32,7 +33,7 @@ export const sendSuccess = <T>({
 
 export const sendError = ({
   message = "Something went wrong",
-  code = "INTERNAL_ERROR",
+  code = ERROR_CODES.INTERNAL_ERROR,
   status = 500,
   details = null,
 }: {
