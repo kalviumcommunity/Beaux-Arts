@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { ShoppingBag, Menu, X } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
-import { useState } from 'react';
-import { motion } from "motion/react"
+import { ShoppingBag, Menu, X } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 export function Header() {
   const { totalItems, setIsCartOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/shop', label: 'Shop' },
-    { to: '/artists', label: 'Artists' },
-    { to: '/apply', label: 'Sell With Us' },
+    { to: "/", label: "Home" },
+    { to: "/shop", label: "Shop" },
+    { to: "/artists", label: "Artists" },
+    { to: "/apply", label: "Sell With Us" },
   ];
 
   return (
@@ -20,7 +20,10 @@ export function Header() {
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="font-display text-2xl md:text-3xl tracking-tight">
+          <Link
+            href="/"
+            className="font-display text-2xl md:text-3xl tracking-tight"
+          >
             Beaux
           </Link>
 
@@ -29,7 +32,7 @@ export function Header() {
             {navLinks.map((link) => (
               <Link
                 key={link.to}
-                to={link.to}
+                href={link.to}
                 className="font-body text-sm tracking-wide text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.label}
@@ -56,7 +59,11 @@ export function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 hover:bg-secondary rounded-sm transition-colors"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -67,7 +74,7 @@ export function Header() {
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t border-border bg-background"
           >
@@ -75,7 +82,7 @@ export function Header() {
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
-                  to={link.to}
+                  href={link.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className="font-body text-base py-2 text-muted-foreground hover:text-foreground transition-colors"
                 >

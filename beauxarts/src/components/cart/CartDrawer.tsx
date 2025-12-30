@@ -9,7 +9,7 @@ export function CartDrawer() {
     items,
     isCartOpen,
     setIsCartOpen,
-    removeFromCart,
+    removeFromCart,   
     updateQuantity,
     totalPrice,
   } = useCart();
