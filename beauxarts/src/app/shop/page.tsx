@@ -56,7 +56,7 @@ const Shop = () => {
         // Fetch both in parallel
         const [catRes, artRes] = await Promise.all([
           fetch("/api/categories"),
-          fetch("/api/artists")
+          fetch("/api/artists?mode=list")
         ]);
 
         const catData = await catRes.json();
@@ -250,7 +250,7 @@ const Shop = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {artworks.map((artwork) => (
-                <Link key={artwork.id} href={`/product/${artwork.id}`} className="group">
+                <Link key={artwork.id} href={`/artworks/${artwork.id}`} className="group">
                   <div className="relative aspect-[3/4] bg-secondary overflow-hidden mb-4">
                     <Image
                       src={artwork.image[0] || "/placeholder.jpg"}

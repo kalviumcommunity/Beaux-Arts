@@ -1,8 +1,7 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { sendSuccess, sendError } from "@/lib/responseHandler";
-import { Prisma } from "@/generated/prisma/client"; // Import Prisma types for type safety
-
+import { Prisma } from "@/generated/prisma/client"; 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -23,10 +22,9 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // --- 3. BUILD THE 'WHERE' CLAUSE (Dynamic Filtering) ---
-    // We explicitly type this so TypeScript knows valid Prisma filters
+   
     const where: Prisma.ArtworkWhereInput = {
-       // Only show active/available items by default if you want
-       // available: true, 
+       
     };
 
     // A. Search Filter (Title OR Description OR Medium)
@@ -39,7 +37,6 @@ export async function GET(request: NextRequest) {
     }
 
     // B. Category Filter (Relation Filter)
-    // "Find artworks where at least one (some) category matches this ID"
     if (categoryId) {
       where.categories = {
         some: {
@@ -84,20 +81,20 @@ export async function GET(request: NextRequest) {
     }
 
     // --- 5. EXECUTE QUERIES (Parallel for Performance) ---
-    // We need two things: the actual data, and the total count (for pagination)
+    
     const [artworks, total] = await Promise.all([
       prisma.artwork.findMany({
         where,
         orderBy,
         skip,
         take: limit,
-        // Include relations to match your JSON response structure
+        
         include: {
           artist: {
             select: {
               id: true,
               storeName: true,
-              // user: { select: { fullname: true } } // If you need the real name too
+              
             },
           },
           categories: {
@@ -111,10 +108,10 @@ export async function GET(request: NextRequest) {
     ]);
 
     // --- 6. FORMAT RESPONSE ---
-    // Flatten categories if needed (Prisma returns { category: { name: "Abstract" } })
+    
     const formattedArtworks = artworks.map((art) => ({
       ...art,
-      // Transform categories to simple array: [{ id: 1, name: "Abstract" }]
+      
       categories: art.categories.map((c) => ({
         id: c.category.id,
         name: c.category.name,
