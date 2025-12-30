@@ -1,10 +1,8 @@
 import { z } from 'zod';
 
 export const userSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-    password: z.string().min(8),
-    phone: z.number().min(10).max(15).optional(),
+  fullname: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  phone: z.string().min(10, "Phone number is too short").max(15, "Phone number is too long").optional(),
 });
-
-  
