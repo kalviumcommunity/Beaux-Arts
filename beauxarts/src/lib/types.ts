@@ -1,7 +1,8 @@
 import { Role } from "@/generated/prisma/client";
 
-export interface JWTPayload {
+export interface tokenPayload {
   userId: number;
   email: string;
   role: Role; 
+  fullname?: string;
 }

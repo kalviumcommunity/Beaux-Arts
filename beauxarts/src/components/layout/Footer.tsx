@@ -1,32 +1,45 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border mt-20">
-      <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+    <footer className="border-t border-border">
+      <div className="px-4 md:px-6 py-10 md:py-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <Link href="/" className="font-display text-2xl tracking-tight">
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="text-lg font-medium tracking-tight">
               Beaux
             </Link>
-            <p className="mt-4 text-muted-foreground font-body text-sm max-w-md leading-relaxed">
-              Curating exceptional art from emerging and established artists worldwide. 
-              Every piece tells a story, every purchase supports an artist in their  journey.
+            <p className="mt-3 text-[13px] text-muted-foreground leading-relaxed max-w-xs">
+              Curating exceptional art from emerging and established artists worldwide.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Shop */}
           <div>
-            <h4 className="font-display text-sm mb-4">Explore</h4>
+            <h4 className="text-[13px] font-medium mb-4">Shop</h4>
             <nav className="flex flex-col gap-2">
-              <Link href="/shop" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Shop All
+              <Link href="/shop" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+                All Products
               </Link>
-              <Link href="/artists" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/shop?category=Paintings" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+                Paintings
+              </Link>
+              <Link href="/shop?category=Photography" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+                Photography
+              </Link>
+            </nav>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="text-[13px] font-medium mb-4">Company</h4>
+            <nav className="flex flex-col gap-2">
+              <Link href="/artists" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
                 Artists
               </Link>
-              <Link href="/apply" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {/* Note: Ensure you have an /apply route created for this Link */}
+              <Link href="/apply" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
                 Sell With Us
               </Link>
             </nav>
@@ -34,25 +47,23 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display text-sm mb-4">Contact</h4>
-            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+            <h4 className="text-[13px] font-medium mb-4">Contact</h4>
+            <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <a href="mailto:hello@beaux.art" className="hover:text-foreground transition-colors">
                 hello@beaux.art
               </a>
-              <p>New York, NY</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-4 text-xs text-muted-foreground">
-          <p>© 2024 Beaux. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+        <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row justify-between gap-4 text-[12px] text-muted-foreground">
+          <p>© 2024 Beaux</p>
+          <div className="flex gap-4">
+            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-

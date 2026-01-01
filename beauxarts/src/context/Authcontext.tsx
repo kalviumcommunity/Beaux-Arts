@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation'; // Optional: Use this if you want auto-redirects
+import { useRouter } from 'next/navigation';
 
 // --- Types ---
 export interface User {
@@ -21,6 +21,7 @@ export interface SignupData {
 
 export interface AuthContextType {
   user: User | null;
+  token: string | null; // 👈 1. Added Token here
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
@@ -33,20 +34,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  // Start loading true to prevent "flash" of logged-out content while checking storage
+  const [token, setToken] = useState<string | null>(null); // 👈 2. Added Token State
   const [isLoading, setIsLoading] = useState(true); 
   const router = useRouter(); 
 
-  // 1. INITIALIZE: Check for saved session on mount
+  // 1. INITIALIZE
   useEffect(() => {
     const initializeAuth = () => {
       try {
         const storedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
+        const storedToken = localStorage.getItem('token');
 
-        if (token && storedUser) {
-        
+        if (storedToken && storedUser) {
           setUser(JSON.parse(storedUser));
+          setToken(storedToken); // 👈 3. Restore token to state
         }
       } catch (error) {
         console.error("Failed to parse user from storage", error);
@@ -75,14 +76,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: res.message || 'Login failed' };
       }
 
-      
       const { user, token } = res.data;
 
-      
+      // Save to Storage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
+      // Update State
       setUser(user);
+      setToken(token); // 👈 4. Set token on login
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -109,11 +111,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const { user, token } = res.data;
 
-      // SAVE TO STORAGE
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
       setUser(user);
+      setToken(token); // 👈 5. Set token on signup
       return { success: true };
     } catch (error) {
       console.error('Signup error:', error);
@@ -127,12 +129,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Clear local data immediately
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       setUser(null);
-      
-      
+      setToken(null); // 👈 6. Clear token on logout
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -140,34 +140,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // 5. UPDATE PROFILE
+  // 5. UPDATE PROFILE (Now with actual API call!)
   const updateProfile = useCallback(async (data: Partial<User>) => {
     setIsLoading(true);
     try {
-       // const response = await fetch('/api/user/profile', { ... });
-       
-      if (user) {
-        const updatedUser = { ...user, ...data };
-        
-        
+      // 👈 7. Actually call the backend to update
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Use the token!
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const res = await response.json();
+
+      if (res.success) {
+        const updatedUser = res.data;
         setUser(updatedUser);
-        
-        
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        return { success: true };
+      } else {
+        return { success: false, error: res.message };
       }
-      return { success: true };
     } catch (error) {
       console.error('Update profile error:', error);
       return { success: false, error: 'Update failed.' };
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [token]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        token, // 👈 8. Expose token in Context
         isAuthenticated: !!user,
         isLoading,
         login,
