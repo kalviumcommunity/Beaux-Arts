@@ -15,7 +15,7 @@ async function getArtistsData() {
         _count: { select: { artworks: true } }, // Get count of works
         artworks: {
           where: { available: true },
-          take: 1, // We only need 1 image for the thumbnail
+          take: 1, 
           orderBy: { createdAt: 'desc' },
           select: { image: true }
         }

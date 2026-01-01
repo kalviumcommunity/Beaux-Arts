@@ -45,7 +45,6 @@ const Apply = () => {
 
     try {
       // 1. Prepare data for the API
-      // Since our schema is simple (storeName, bio), we combine some fields into bio
       const combinedBio = `${formData.statement}\n\nPortfolio: ${formData.portfolio}\nInstagram: ${formData.instagram}`;
 
       const response = await fetch('/api/artists/apply', {
