@@ -1,11 +1,11 @@
 import Container from '@/components/layout/Container'
-import Auth from '@/components/pages/Auth'
-
+import ArtistsPage from '@/components/pages/Artist'
+import React from 'react'
 
 const page = () => {
   return (
     <Container>
-      <Auth/>
+        <ArtistsPage/>
     </Container>
   )
 }

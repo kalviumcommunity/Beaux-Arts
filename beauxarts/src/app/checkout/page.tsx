@@ -1,11 +1,10 @@
 import Container from '@/components/layout/Container'
-import Auth from '@/components/pages/Auth'
-
+import Checkout from '@/components/pages/Checkout'
 
 const page = () => {
   return (
     <Container>
-      <Auth/>
+        <Checkout/>
     </Container>
   )
 }
