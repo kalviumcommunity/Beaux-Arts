@@ -2,11 +2,21 @@ import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { sendSuccess, sendError } from "@/lib/responseHandler";
 import { Prisma } from "@/generated/prisma/client";
+import redis from "@/lib/redis";
 
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const mode = searchParams.get("mode");
+
+    const cacheKey = `artists:${req.nextUrl.search}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return sendSuccess({ data: JSON.parse(cached) });
+    }
+
+
+
 
     // CASE 1: Simple List for Filters (Shop Sidebar)
 
@@ -19,6 +29,8 @@ export async function GET(req: NextRequest) {
         },
         orderBy: { storeName: "asc" },
       });
+
+      await redis.set(cacheKey, JSON.stringify(artists), "EX", 60 * 5); // Cache for 5 minutes
 
       return sendSuccess({ data: artists });
     }
@@ -49,13 +61,17 @@ export async function GET(req: NextRequest) {
       prisma.artist.count({ where: { storeName: searchFilter } }),
     ]);
 
+    const responseData = {
+      artists,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+
+    await redis.set(cacheKey, JSON.stringify(responseData), "EX", 60 * 5); // Cache for 5 minutes
+
     return sendSuccess({
-      data: {
-        artists,
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: responseData,
     });
   } catch (error) {
     return sendError({ message: "Error fetching artists", details: error });
